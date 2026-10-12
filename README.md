@@ -12,6 +12,12 @@ WindowsとMacの両方で動くネイティブ部品（DLL / dylib）を、push 
 | `.github/workflows/ci.yml` | `windows-latest` と `macos-latest`（Apple Silicon）で同時に実行 |
 | `scripts/failure_report.py` | 失敗時に、OS・落ちた手順・ログの要点を短い文章にまとめる |
 
+## 使い方は2通り
+- **新しく作る**: このページ右上の **Use this template** → 自分のリポジトリができる → `src/` を自分の部品に置き換えて push。
+- **今あるSDKに足す**: 下の4手順。
+
+インストールするものはありません。動くのは自分のリポジトリの GitHub Actions です（Mac が手元に無くても確かめられます）。
+
 ## 自分のSDKへの入れ方
 1. `.github/workflows/ci.yml` と `scripts/failure_report.py` を自分のリポジトリへコピー。
 2. 自分の `CMakeLists.txt` に、共有ライブラリと `add_test`（読み込みテスト）を足す。見本の `CMakeLists.txt` / `tests/load_test.c` を真似る。
