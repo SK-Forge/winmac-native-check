@@ -26,7 +26,17 @@ jobs:
 
       - name: 読み込みテスト
         id: test
-        run: ctest --test-dir build -C Release --output-on-failure 2>&1 | tee test.log
+        run: ctest --test-dir build -C Release --output-on-failure --no-tests=error 2>&1 | tee test.log
+
+      # 成功時も、何を確かめたかを Summary に残す（テスト件数が0なら上の手順で赤になる）
+      - name: 成功の記録
+        if: success()
+        run: |
+          n=$(grep -Eo 'out of [0-9]+' test.log | grep -Eo '[0-9]+' | tail -1)
+          {
+            echo "### 確認OK: ${{ runner.os }} (${{ runner.arch }})"
+            echo "- 組み立て: 成功 / テスト件数: ${n:-不明} 件すべて成功"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # 失敗したときだけ、AIに貼れる要約を Job Summary に出す
       - name: 失敗の報告を作る
