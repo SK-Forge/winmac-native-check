@@ -19,6 +19,7 @@ def key_lines(text: str) -> list[str]:
 
 
 def main() -> int:
+    sys.stdout.reconfigure(encoding="utf-8")  # Windows の既定(cp1252)だと日本語で落ちる
     log_path, steps = sys.argv[1], sys.argv[2:]
     try:
         with open(log_path, encoding="utf-8", errors="replace") as f:

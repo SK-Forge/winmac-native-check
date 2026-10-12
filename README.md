@@ -21,6 +21,19 @@ WindowsとMacの両方で動くネイティブ部品（DLL / dylib）を、push 
 ## 失敗したとき
 Actions の該当実行の **Summary** に「CI失敗の報告」が出ます。その文章をそのまま Codex / Claude Code に貼れば直させられます。
 
+報告の見本（わざと壊した実行から。Windows と Mac それぞれに出る）:
+```text
+【CI失敗の報告】Windows（X64）の確認で落ちました。
+落ちた手順: 読み込みテスト
+対象: <オーナー>/<リポジトリ> / コミット 540c6b3
+ログの要点:
+    CALL_FAIL: winmac_add(2,3) = -1（期待 5）
+    1 - load_test (Failed)
+
+お願い: 上のログを読んで原因を直してください。Windows 側だけの問題かもしれないので、もう片方のOSでも動く形で直してください。
+```
+手順: Actions の失敗した実行を開く → 各OSのジョブの Summary → 文章をコピー → Codex / Claude Code に貼る → 直させて push → 両OSが緑になるまで繰り返す。
+
 ## 限界（Actions でできないこと）
 - **機器が要るテスト**（USB機器・カメラ・専用ドライバなど）は Actions にはありません。手元で行う。Actions で確かめるのは、機器なしで済むところ（組み立て・読み込み・純粋な計算）まで。
 - 手元の確認: Windows は Visual Studio 付属の CMake で `cmake -S . -B build && cmake --build build --config Release && ctest --test-dir build -C Release`。
@@ -31,4 +44,5 @@ Actions の該当実行の **Summary** に「CI失敗の報告」が出ます。
 
 ## 確認状況
 - Windows（手元）: 組み立て・読み込みテストとも通過（2026-10-12）。
-- Mac: **未確認**（Actions を動かすまで）。
+- Mac（Actions の macos-latest、Apple Silicon）: 組み立て・読み込みテストとも通過（2026-10-12）。
+- 失敗報告: わざと壊した実行で、Windows・Mac 両方に報告文が出ることを確認。
