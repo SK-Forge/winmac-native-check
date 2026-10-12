@@ -1,0 +1,39 @@
+name: WinMac確認
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false   # 片方が落ちても、もう片方の結果まで必ず出す
+      matrix:
+        os: [windows-latest, macos-latest]   # macos-latest = Apple Silicon
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 組み立て
+        id: build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release 2>&1 | tee build.log
+          cmake --build build --config Release 2>&1 | tee -a build.log
+
+      - name: 読み込みテスト
+        id: test
+        run: ctest --test-dir build -C Release --output-on-failure 2>&1 | tee test.log
+
+      # 失敗したときだけ、AIに貼れる要約を Job Summary に出す
+      - name: 失敗の報告を作る
+        if: failure()
+        run: |
+          failed=""
+          [ "${{ steps.build.outcome }}" = "failure" ] && failed="$failed 組み立て"
+          [ "${{ steps.test.outcome }}" = "failure" ] && failed="$failed 読み込みテスト"
+          cat build.log test.log 2>/dev/null > ci.log || true
+          "$(command -v python3 || command -v python)" scripts/failure_report.py ci.log $failed
