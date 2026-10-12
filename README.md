@@ -6,7 +6,7 @@ WindowsとMacの両方で動くネイティブ部品（DLL / dylib）を、push 
 ## まず試す（3手順）
 **Use this template → コードを変えて push → Actions タブを開き、Windows と Mac の両方が緑か見る。** 赤なら Summary の報告文を AI に貼る。
 
-> Mac の確認は **Apple Silicon（M1以降）のみ**。Intel Mac は対象外です。要るなら ci.yml の `os:` に `macos-13` を足してください。
+> Mac の確認は **Apple Silicon（M1以降）のみ**。Intel Mac は対象外です。要るなら ci.yml の `os:` に `macos-15-intel` を足してください（`macos-13` は提供終了。今の Intel ラベルは [GitHub公式の一覧](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) で確認）。
 > テストが **0件だと赤**になります（`ctest --no-tests=error`）。「何も確かめていないのに緑」を防ぐためです。
 
 ## 中身
@@ -42,6 +42,9 @@ WindowsとMacの両方で動くネイティブ部品（DLL / dylib）を、push 
 ```yaml
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+
+      - name: テスト道具を入れる
+        run: python -m pip install pytest   # requirements.txt があるなら: python -m pip install -r requirements.txt
 
       - name: 組み立て
         id: build
